@@ -5378,6 +5378,11 @@ jest@^27.4.3:
     import-local "^3.0.2"
     jest-cli "^27.4.5"
 
+js-combinatorics@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/js-combinatorics/-/js-combinatorics-1.5.4.tgz#fb9c8c1817ef76c8f4d1e43b465df8705b060976"
+  integrity sha512-RpJ15pyuged8J5FNR/RrCxel53mcTmpmERa9fmN/IujwCQJ3AoiymWvwzqU63/CIUMB94s1/t0u78696c4eEfw==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
