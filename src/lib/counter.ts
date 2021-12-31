@@ -1,7 +1,7 @@
-import * as $C from 'js-combinatorics';
-import { createKey } from './createKey';
+import * as $C from "js-combinatorics";
+import { createKey } from "./createKey";
 
-export interface Counts {
+export interface CountsMap {
   [key: string]: {
     p1: string;
     p2: string;
@@ -9,12 +9,24 @@ export interface Counts {
   };
 }
 
+export class Counts {
+  #counts: CountsMap;
+
+  constructor(counts: CountsMap) {
+    this.#counts = counts;
+  }
+
+  for(playerA: string, playerB: string) {
+    return this.#counts[createKey([playerA, playerB])];
+  }
+}
+
 export class Counter {
   readonly #players: string[];
-  readonly #counts: Counts;
+  readonly #counts: CountsMap;
 
   constructor(players: string[]) {
-    this.#players = players.sort();
+    this.#players = players.map((player) => player.trim()).sort();
     this.#counts = {};
     const playerPairings = new $C.Combination(this.#players, 2);
 
@@ -29,7 +41,7 @@ export class Counter {
   }
 
   get counts() {
-    return this.#counts;
+    return new Counts(this.#counts);
   }
 
   count(games: string[][]) {

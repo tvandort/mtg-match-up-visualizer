@@ -1,5 +1,5 @@
-import { Counts } from './counter';
-import { createKey } from './createKey';
+import { Counts } from "./counter";
+import { createKey } from "./createKey";
 
 export class Printer {
   readonly #players: string[];
@@ -11,12 +11,12 @@ export class Printer {
   }
 
   header() {
-    return ' \t' + this.#players.join('\t');
+    return " \t" + this.#players.join("\t");
   }
 
   row(number: number) {
     if (number < 1 || number > 1 + this.#players.length) {
-      throw new Error('Out of bounds.');
+      throw new Error("Out of bounds.");
     }
 
     if (number === 1) {
@@ -30,16 +30,16 @@ export class Printer {
 
       for (const player of this.#players) {
         if (player === headerPlayer) {
-          line.push('X');
+          line.push("X");
         } else {
-          line.push(this.#counts[createKey([player, headerPlayer])].count);
+          line.push(this.#counts.for(headerPlayer, player).count);
         }
       }
 
-      return line.join('\t');
+      return line.join("\t");
     }
 
-    return '';
+    return "";
   }
 
   table() {
@@ -48,6 +48,6 @@ export class Printer {
       lines.push(this.row(index + 1));
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 }
