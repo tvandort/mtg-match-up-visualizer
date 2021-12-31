@@ -44,6 +44,16 @@ export class Counter {
     return new Counts(this.#counts);
   }
 
+  get lowest() {
+    let lowest = Number.MAX_VALUE;
+    for (const [, { count }] of Object.entries(this.#counts)) {
+      if (lowest > count) {
+        lowest = count;
+      }
+    }
+    return lowest;
+  }
+
   count(games: string[][]) {
     for (const game of games) {
       const orderedGame = game.sort();

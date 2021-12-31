@@ -28,7 +28,6 @@ function App() {
     const games = gamesText.split("\n").map((game) => game.split(","));
 
     const counter = new Counter(players);
-    console.log({ players, games, counter });
 
     counter.count(games);
 
@@ -37,48 +36,60 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        <label>
-          Players:&nbsp;
-          <textarea
-            value={playersText}
-            onChange={({ target: { value } }) => setPlayersText(value)}
-          />
-        </label>
+      <div className="mb-8">
+        <div className="flex flex-col gap-4 mb-4">
+          <div className="flex content-center">
+            <label htmlFor="players">Players:&nbsp;</label>
+            <textarea
+              id="players"
+              className="resize border border-gray-500"
+              value={playersText}
+              onChange={({ target: { value } }) => setPlayersText(value)}
+            />
+          </div>
+          <div className="flex content-center">
+            <label htmlFor="games">Games:&nbsp;</label>
+            <textarea
+              id="games"
+              className="resize border border-gray-500"
+              value={gamesText}
+              onChange={({ target: { value } }) => setGamesText(value)}
+            />
+          </div>
+        </div>
+        <div>
+          <button
+            onClick={handleCountClick}
+            className="text-white text-lg font-medium bg-blue-500 px-4 py-1 border-1  border-black shadow-lg"
+          >
+            Count
+          </button>
+        </div>
       </div>
-      <div>
-        <label>
-          Games:&nbsp;
-          <textarea
-            value={gamesText}
-            onChange={({ target: { value } }) => setGamesText(value)}
-          />
-        </label>
-      </div>
-      <br />
-      <div>
-        <button onClick={handleCountClick}>Count</button>
-      </div>
-      <hr />
+      <hr className="mb-8" />
       <div>
         {result ? (
-          <table>
+          <table className="table-auto border border-gray-500 border-collapse">
             <thead>
               <td></td>
               {result.players.map((player) => (
-                <th>{player}</th>
+                <th className="border border-gray-600">{player}</th>
               ))}
             </thead>
             <tbody>
               {result.players.map((playerA) => (
                 <tr>
-                  <th>{playerA}</th>
+                  <th className="border border-gray-700">{playerA}</th>
                   {result.players.map((playerB) => {
                     if (playerA === playerB) {
-                      return <td>X</td>;
+                      return (
+                        <td className="text-right border border-gray-700">X</td>
+                      );
                     } else {
                       return (
-                        <td>{result.counts.for(playerA, playerB).count}</td>
+                        <td className="text-right border border-gray-700">
+                          {result.counts.for(playerA, playerB).count}
+                        </td>
                       );
                     }
                   })}
