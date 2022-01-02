@@ -17,12 +17,31 @@ export class Counts {
   }
 
   for(playerA: string, playerB: string) {
-    return this.#counts[createKey([playerA, playerB])];
+    const count = this.#counts[createKey([playerA, playerB])];
+    if (count) {
+      return count.count;
+    }
+    return 0;
+  }
+
+  // Don't modify anything here.
+  asMap() {
+    return { ...this.#counts };
+  }
+
+  lowest() {
+    let lowest = Number.MAX_VALUE;
+    for (const [, { count }] of Object.entries(this.#counts)) {
+      if (count < lowest) {
+        lowest = count;
+      }
+    }
+    return lowest;
   }
 }
 
 export class Counter {
-  readonly #players: string[];
+  #players: string[];
   readonly #counts: CountsMap;
 
   constructor(players: string[]) {
@@ -58,10 +77,25 @@ export class Counter {
     for (const game of games) {
       const orderedGame = game.sort();
       const pairs = new $C.Combination(orderedGame, 2).toArray();
-      for (const pair of pairs) {
-        const key = createKey(pair);
+      for (const [a, b] of pairs) {
+        const key = createKey([a, b]);
+        if (!this.#counts[key]) {
+          this.#counts[key] = { count: 0, p1: a, p2: b };
+          const players = [...this.#players];
+          if (!players.includes(a)) {
+            players.push(a);
+          }
+          if (!players.includes(b)) {
+            players.push(b);
+          }
+          this.#players = players.sort();
+        }
         this.#counts[key].count += 1;
       }
     }
+  }
+
+  get players() {
+    return this.#players.map((player) => player);
   }
 }

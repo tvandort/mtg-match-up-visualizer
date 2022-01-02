@@ -1,5 +1,4 @@
 import { Counts } from "./counter";
-import { createKey } from "./createKey";
 
 export class Printer {
   readonly #players: string[];
@@ -32,7 +31,7 @@ export class Printer {
         if (player === headerPlayer) {
           line.push("X");
         } else {
-          line.push(this.#counts.for(headerPlayer, player).count);
+          line.push(this.#counts.for(headerPlayer, player));
         }
       }
 

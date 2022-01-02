@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Counter, Counts } from "../lib/counter";
+import cx from "classnames";
 
 import "./App.css";
 
@@ -20,19 +21,36 @@ function App() {
   const [playersText, setPlayersText] = useState(players.join(","));
   const [gamesText, setGamesText] = useState("Tom, Adam");
   const [result, setResult] = useState<
-    { players: string[]; counts: Counts } | undefined
+    { players: string[]; counts: Counts; lowest: number } | undefined
   >();
 
-  const handleCountClick = () => {
-    const players = playersText.split(",").sort();
-    const games = gamesText.split("\n").map((game) => game.split(","));
+  useEffect(() => {
+    const players = playersText
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter((entry) => entry)
+      .sort();
+    const weeks = gamesText.split("\n").map((week) =>
+      week.split("|").map((game) =>
+        game
+          .split(",")
+          .map((entry) => entry.trim())
+          .filter((entry) => entry)
+      )
+    );
 
     const counter = new Counter(players);
 
-    counter.count(games);
+    for (const week of weeks) {
+      counter.count(week);
+    }
 
-    setResult({ counts: counter.counts, players });
-  };
+    setResult({
+      counts: counter.counts,
+      players: counter.players,
+      lowest: counter.lowest,
+    });
+  }, [playersText, gamesText]);
 
   return (
     <div className="App">
@@ -57,38 +75,44 @@ function App() {
             />
           </div>
         </div>
-        <div>
-          <button
-            onClick={handleCountClick}
-            className="text-white text-lg font-medium bg-blue-500 px-4 py-1 border-1  border-black shadow-lg"
-          >
-            Count
-          </button>
-        </div>
       </div>
       <hr className="mb-8" />
       <div>
         {result ? (
           <table className="table-auto border border-gray-500 border-collapse">
             <thead>
-              <td></td>
-              {result.players.map((player) => (
-                <th className="border border-gray-600">{player}</th>
-              ))}
+              <tr>
+                <td />
+                {result.players.map((player) => (
+                  <th className="border border-gray-600" key={player}>
+                    {player}
+                  </th>
+                ))}
+              </tr>
             </thead>
             <tbody>
               {result.players.map((playerA) => (
-                <tr>
+                <tr key={playerA}>
                   <th className="border border-gray-700">{playerA}</th>
                   {result.players.map((playerB) => {
+                    const key = `(${playerA}, ${playerB})`;
                     if (playerA === playerB) {
                       return (
-                        <td className="text-right border border-gray-700">X</td>
+                        <td
+                          className="text-right border border-gray-700 bg-black"
+                          key={key}
+                        ></td>
                       );
                     } else {
+                      const count = result.counts.for(playerA, playerB);
                       return (
-                        <td className="text-right border border-gray-700">
-                          {result.counts.for(playerA, playerB).count}
+                        <td
+                          className={cx("text-right border border-gray-700", {
+                            "bg-red-300": count === result.lowest,
+                          })}
+                          key={key}
+                        >
+                          {count}
                         </td>
                       );
                     }
@@ -102,6 +126,17 @@ function App() {
         )}
       </div>
     </div>
+  );
+}
+
+function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      {...props}
+      className="text-white text-lg font-medium bg-blue-500 px-4 py-1 border-1  border-black shadow-lg"
+    >
+      Count
+    </button>
   );
 }
 
