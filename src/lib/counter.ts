@@ -43,10 +43,12 @@ export class Counts {
 export class Counter {
   #players: string[];
   readonly #counts: CountsMap;
+  readonly #gamesPlayed: { [key: string]: number };
 
   constructor(players: string[]) {
     this.#players = players.map((player) => player.trim()).sort();
     this.#counts = {};
+    this.#gamesPlayed = {};
     const playerPairings = new $C.Combination(this.#players, 2);
 
     for (const pairing of playerPairings) {
@@ -57,6 +59,10 @@ export class Counter {
         count: 0,
       };
     }
+  }
+
+  countFor(player: string) {
+    return this.#gamesPlayed[player];
   }
 
   get counts() {
@@ -75,8 +81,8 @@ export class Counter {
 
   count(games: string[][]) {
     for (const game of games) {
-      const orderedGame = game.sort();
-      const pairs = new $C.Combination(orderedGame, 2).toArray();
+      const orderedPlayers = game.sort();
+      const pairs = new $C.Combination(orderedPlayers, 2).toArray();
       for (const [a, b] of pairs) {
         const key = createKey([a, b]);
         if (!this.#counts[key]) {
@@ -90,8 +96,19 @@ export class Counter {
           }
           this.#players = players.sort();
         }
+
         this.#counts[key].count += 1;
       }
+      for (const player of orderedPlayers) {
+        // Total count for player a
+        if (this.#gamesPlayed[player]) {
+          this.#gamesPlayed[player] += 1;
+        } else {
+          this.#gamesPlayed[player] = 1;
+        }
+      }
+
+      console.log(orderedPlayers);
     }
   }
 

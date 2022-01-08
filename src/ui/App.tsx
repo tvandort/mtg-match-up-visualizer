@@ -21,7 +21,13 @@ function App() {
   const [playersText, setPlayersText] = useState(players.join(","));
   const [gamesText, setGamesText] = useState("Tom, Adam");
   const [result, setResult] = useState<
-    { players: string[]; counts: Counts; lowest: number } | undefined
+    | {
+        players: string[];
+        counts: Counts;
+        lowest: number;
+        gamesPlayed: (player: string) => number;
+      }
+    | undefined
   >();
 
   useEffect(() => {
@@ -49,6 +55,7 @@ function App() {
       counts: counter.counts,
       players: counter.players,
       lowest: counter.lowest,
+      gamesPlayed: (player: string) => counter.countFor(player),
     });
   }, [playersText, gamesText]);
 
@@ -79,48 +86,54 @@ function App() {
       <hr className="mb-8" />
       <div>
         {result ? (
-          <table className="table-auto border border-gray-500 border-collapse">
-            <thead>
-              <tr>
-                <td />
-                {result.players.map((player) => (
-                  <th className="border border-gray-600" key={player}>
-                    {player}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {result.players.map((playerA) => (
-                <tr key={playerA}>
-                  <th className="border border-gray-700">{playerA}</th>
-                  {result.players.map((playerB) => {
-                    const key = `(${playerA}, ${playerB})`;
-                    if (playerA === playerB) {
-                      return (
-                        <td
-                          className="text-right border border-gray-700 bg-black"
-                          key={key}
-                        ></td>
-                      );
-                    } else {
-                      const count = result.counts.for(playerA, playerB);
-                      return (
-                        <td
-                          className={cx("text-right border border-gray-700", {
-                            "bg-red-300": count === result.lowest,
-                          })}
-                          key={key}
-                        >
-                          {count}
-                        </td>
-                      );
-                    }
-                  })}
+          <>
+            <table className="table-auto border border-gray-500 border-collapse">
+              <thead>
+                <tr>
+                  <td />
+                  {result.players.map((player) => (
+                    <th className="border border-gray-600" key={player}>
+                      {player}
+                    </th>
+                  ))}
+                  <td>Total games</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {result.players.map((playerA) => (
+                  <tr key={playerA}>
+                    <th className="border border-gray-700">{playerA}</th>
+                    {result.players.map((playerB) => {
+                      const key = `(${playerA}, ${playerB})`;
+                      if (playerA === playerB) {
+                        return (
+                          <td
+                            className="text-right border border-gray-700 bg-black"
+                            key={key}
+                          ></td>
+                        );
+                      } else {
+                        const count = result.counts.for(playerA, playerB);
+                        return (
+                          <td
+                            className={cx("text-right border border-gray-700", {
+                              "bg-red-300": count === result.lowest,
+                            })}
+                            key={key}
+                          >
+                            {count}
+                          </td>
+                        );
+                      }
+                    })}
+                    <td className="text-right border border-gray-700">
+                      {result.gamesPlayed(playerA)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         ) : (
           <>Click Count to well... Count.</>
         )}
