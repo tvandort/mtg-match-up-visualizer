@@ -39,7 +39,9 @@ function App() {
     const weeks = gamesText.split("\n").map((week) =>
       week.split("|").map((game) =>
         game
-          .split(",")
+          .split("\t")
+          .map((entry) => entry.split(","))
+          .flatMap((entry) => entry)
           .map((entry) => entry.trim())
           .filter((entry) => entry)
       )
@@ -118,6 +120,9 @@ function App() {
                           <td
                             className={cx("text-right border border-gray-700", {
                               "bg-red-300": count === result.lowest,
+                              "bg-orange-300": count === result.lowest + 1,
+                              "bg-green-300": count === result.lowest + 3,
+                              "bg-purple-300": count === result.lowest + 4,
                             })}
                             key={key}
                           >
