@@ -147,15 +147,4 @@ function App() {
   );
 }
 
-function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      className="text-white text-lg font-medium bg-blue-500 px-4 py-1 border-1  border-black shadow-lg"
-    >
-      Count
-    </button>
-  );
-}
-
 export default App;
